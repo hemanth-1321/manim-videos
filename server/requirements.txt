@@ -1,0 +1,5 @@
+boto3
+glob2
+prisma
+FastAPI
+genai
