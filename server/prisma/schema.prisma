@@ -21,9 +21,18 @@ model User {
 }
 
 model Video {
-    id         String   @id @default(cuid())
-    url        String
-    user       User     @relation(fields: [userId], references: [id])
+    id         String      @id @default(cuid())
+    url        String?
+    prompt     String      @default("")
+    user       User        @relation(fields: [userId], references: [id])
+    isPublic   Boolean     @default(false)
+    status     VideoStatus @default(PROCESSING)
     userId     String
-    created_at DateTime @default(now())
+    created_at DateTime    @default(now())
+}
+
+enum VideoStatus {
+    PROCESSING
+    CREATED
+    FAILED
 }

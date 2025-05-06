@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Navbar,
   NavBody,
@@ -10,11 +11,29 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ThemeToggle from "./ThemeToggle";
+import { useRouter } from "next/navigation";
 
 export function AppBar() {
-  
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    setToken(storedToken);
+  }, []);
+
+  const handleLogin = () => {
+    router.push("/login");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    router.refresh(); 
+  };
 
   return (
     <div className="relative w-full">
@@ -23,8 +42,19 @@ export function AppBar() {
         <NavBody>
           <NavbarLogo />
           <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary">Book a call</NavbarButton>
+            <ThemeToggle />
+            {token ? (
+              <>
+                <span className="text-sm text-muted-foreground">Hello!</span>
+                <NavbarButton onClick={handleLogout} variant="secondary">
+                  Logout
+                </NavbarButton>
+              </>
+            ) : (
+              <NavbarButton onClick={handleLogin} variant="secondary">
+                Login
+              </NavbarButton>
+            )}
           </div>
         </NavBody>
 
@@ -32,39 +62,50 @@ export function AppBar() {
         <MobileNav>
           <MobileNavHeader>
             <NavbarLogo />
-            <MobileNavToggle
-              isOpen={isMobileMenuOpen}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <MobileNavToggle
+                isOpen={isMobileMenuOpen}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              />
+            </div>
           </MobileNavHeader>
 
           <MobileNavMenu
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
           >
-            
             <div className="flex w-full flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Book a call
-              </NavbarButton>
+              {token ? (
+                <>
+                  <span className="text-center text-muted-foreground">Hello!</span>
+                  <NavbarButton
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    variant="primary"
+                    className="w-full"
+                  >
+                    Logout
+                  </NavbarButton>
+                </>
+              ) : (
+                <NavbarButton
+                  onClick={() => {
+                    handleLogin();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  variant="primary"
+                  className="w-full"
+                >
+                  Login
+                </NavbarButton>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
-
-      {/* Navbar */}
     </div>
   );
 }
-

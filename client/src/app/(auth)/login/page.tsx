@@ -1,8 +1,10 @@
+import { AuthForm } from "@/components/AuthForm"
+
 const page =()=>{
     return (
 
         <div>
-            hello
+        <AuthForm/>
         </div>
     )
 }
