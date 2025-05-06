@@ -1,5 +1,11 @@
 boto3
 glob2
 prisma
-FastAPI
+fastapi[standard]
 genai
+uvicorn
+google-genai
+importlib_metadata
+passlib[bcrypt]
+python-jose[cryptography]
+python-dotenv
