@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://manimator-latest-1.onrender.com";
+export const BACKEND_URL = "https://manimator.hemanth.buzz";
