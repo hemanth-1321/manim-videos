@@ -2,12 +2,12 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies (minimal LaTeX + required libs)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
     libcairo2-dev \
     libpango1.0-dev \
+    ffmpeg\
     curl \
     git \
     && apt-get clean \

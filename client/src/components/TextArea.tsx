@@ -1,15 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 import { BACKEND_URL } from "@/lib/config";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
 export function TextArea() {
   const [inputValue, setInputValue] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
- const router=useRouter()
+  const [token, setToken] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      return;
+    }
+    setToken(storedToken);
+  }, []);
+
   const placeholders = [
     "Animate a square rotating 360 degrees.",
     "Animate a ball bouncing up and down.",
@@ -87,18 +99,17 @@ export function TextArea() {
       if (!jobId) throw new Error("No jobId returned from backend");
 
       pollStatus(jobId);
-      router.refresh()
+      router.refresh();
     } catch (error: any) {
       setIsProcessing(false);
-      toast.dismiss("processing"); 
+      toast.dismiss("processing");
       console.error("Submission failed:", error.response?.data || error.message);
-      
     }
   };
 
   return (
     <div className="h-[40rem] flex flex-col justify-center items-center px-4">
-      <h2 className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl dark:text-white text-black">
+      <h2 className="mb-10 sm:mb-20 text-xl font-bold text-center sm:text-5xl dark:text-white text-black">
         Generate Video Animations
       </h2>
       <p className="text-center mb-6 text-muted-foreground text-sm max-w-xl">
@@ -109,7 +120,7 @@ export function TextArea() {
         placeholders={placeholders}
         onChange={handleChange}
         onSubmit={onSubmit}
-        ondisabled={isProcessing}
+        ondisabled={isProcessing} // Button is disabled only when processing
       />
     </div>
   );

@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import axios from "axios";
+import { useAuthStore } from "@/stores/useAuth";
+
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BACKEND_URL } from "@/lib/config";
@@ -13,6 +15,7 @@ export function AuthForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); 
   const router=useRouter()
+  const { setToken } = useAuthStore(); 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true); 
@@ -23,7 +26,9 @@ export function AuthForm() {
       });
 
       console.log("Login success:", res.data.response);
-      localStorage.setItem("token", res.data.response);
+
+       const token = res.data.response
+      setToken(token);
       toast.success("Login successull")
       router.push("/")
     } catch (error) {

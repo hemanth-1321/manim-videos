@@ -1,1 +1,1 @@
-export const BACKEND_URL = "http://0.0.0.0:8080";
+export const BACKEND_URL = "https://manimator-latest-1.onrender.com";
