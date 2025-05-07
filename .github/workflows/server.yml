@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to the VM
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
-          chmod 400 ssh_key
+          chmod 600 ssh_key
           ssh -o StrictHostKeyChecking=no -i ssh_key ubuntu@13.203.197.140 << EOF
             docker system prune -af --volumes
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server:latest
