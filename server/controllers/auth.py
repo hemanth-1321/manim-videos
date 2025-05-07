@@ -2,12 +2,12 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from passlib.hash import bcrypt
 from jose import jwt
-from prisma import Prisma
 from datetime import datetime, timedelta
+from utils.db import db
 import os
 
 app = FastAPI()
-db = Prisma()
+
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -21,7 +21,6 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 
 async def authenticate(email: str, password: str):
-    await db.connect()
     user = await db.user.find_unique(where={"email": email})
 
     if user:
@@ -33,7 +32,6 @@ async def authenticate(email: str, password: str):
             "email": email,
             "password": hashed_password
         })
-    await db.disconnect()
 
     token = create_access_token(data={"sub": email,"userId": user.id})
     return  token 
