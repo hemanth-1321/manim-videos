@@ -41,7 +41,7 @@ class LoginRequest(BaseModel):
 async def submit_prompt(prompt: Prompt, user=Depends(get_current_user)):
     try:
         await generate_and_upload_video(prompt=prompt.prompt, user=user["userId"])
-        print("in here")
+        print("in her1")
     except Exception as e:
         print("something went wrong", e)
         raise HTTPException(status_code=500, detail="Video generation failed")
