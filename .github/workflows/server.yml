@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
           chmod 600 ssh_key
-          ssh -o StrictHostKeyChecking=no -i ssh_key ubuntu@13.201.102.194 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ssh_key ubuntu@13.203.197.140 << 'EOF'
             if ! command -v docker &> /dev/null; then
               echo "Docker not found. Installing..."
               curl -fsSL https://get.docker.com -o get-docker.sh
