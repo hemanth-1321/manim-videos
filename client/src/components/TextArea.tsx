@@ -59,7 +59,7 @@ export function TextArea() {
         setIsProcessing(false);
         toast.error("Error while checking video status.");
       }
-    }, 2000); // 2 seconds
+    }, 2000); 
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
