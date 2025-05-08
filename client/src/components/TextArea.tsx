@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 import { BACKEND_URL } from "@/lib/config";
 import axios from "axios";
@@ -10,17 +10,8 @@ import { useRouter } from "next/navigation";
 export function TextArea() {
   const [inputValue, setInputValue] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
 
   const router = useRouter();
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (!storedToken) {
-      return;
-    }
-    setToken(storedToken);
-  }, []);
 
   const placeholders = [
     "Animate a square rotating 360 degrees.",
@@ -37,7 +28,7 @@ export function TextArea() {
   const pollStatus = async (jobId: string) => {
     const token = localStorage.getItem("token");
     let attempts = 0;
-    const maxAttempts = 30; // e.g., 30 x 2s = 1 minute timeout
+    const maxAttempts = 30;
 
     const interval = setInterval(async () => {
       try {
@@ -50,7 +41,7 @@ export function TextArea() {
         if (res.data.status === "done") {
           clearInterval(interval);
           setIsProcessing(false);
-          toast.success("Video created! Check 'My Videos'.");
+          toast.success("Video created! Check \"My Videos\".");
         } else if (res.data.status === "error") {
           clearInterval(interval);
           setIsProcessing(false);
@@ -63,7 +54,7 @@ export function TextArea() {
           setIsProcessing(false);
           toast.error("Video generation timed out.");
         }
-      } catch (err) {
+      } catch {
         clearInterval(interval);
         setIsProcessing(false);
         toast.error("Error while checking video status.");
@@ -83,7 +74,10 @@ export function TextArea() {
 
     try {
       setIsProcessing(true);
-      toast.loading("Processing your video... Please wait!", { id: "processing", duration: Infinity });
+      toast.loading("Processing your video... Please wait!", {
+        id: "processing",
+        duration: Infinity,
+      });
 
       const response = await axios.post(
         `${BACKEND_URL}/submit`,
@@ -100,10 +94,15 @@ export function TextArea() {
 
       pollStatus(jobId);
       router.refresh();
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsProcessing(false);
       toast.dismiss("processing");
-      console.error("Submission failed:", error.response?.data || error.message);
+
+      if (axios.isAxiosError(error)) {
+        console.error("Submission failed:", error.response?.data || error.message);
+      } else {
+        console.error("Submission failed:", error);
+      }
     }
   };
 
@@ -114,7 +113,7 @@ export function TextArea() {
       </h2>
       <p className="text-center mb-6 text-muted-foreground text-sm max-w-xl">
         Enter a natural language prompt to generate math or physics animations using Manim.
-        You'll receive a rendered video preview.
+        You&apos;ll receive a rendered video preview.
       </p>
       <PlaceholdersAndVanishInput
         placeholders={placeholders}
