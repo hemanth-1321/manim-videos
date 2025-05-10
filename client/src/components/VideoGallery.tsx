@@ -6,6 +6,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '@/lib/config';
 import { Download } from 'lucide-react';
 import { useAuthStore } from '@/stores/useAuth';
+import { toast } from 'sonner';
 
 interface Video {
   id: string;
@@ -17,7 +18,7 @@ interface Video {
 interface RawVideo {
   id: string;
   url: string;
-  created_at: string;
+  created_at: string; 
   user?: {
     email: string;
   };
@@ -76,7 +77,16 @@ export default function VideoGallery() {
   }, [setToken]);
 
   useEffect(() => {
-    if (token) fetchUserVideos();
+    if (!token){ 
+      toast.warning("Please login")
+      return
+    }
+    const interval = setInterval(() => {
+      fetchUserVideos();
+
+    }, 5000); 
+    return () => clearInterval(interval); 
+
   }, [token, fetchUserVideos]);
 
   return (
